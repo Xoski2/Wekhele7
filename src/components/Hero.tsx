@@ -20,13 +20,22 @@ const Hero = () => {
   useEffect(() => {
     const el = productRef.current
     if (!el) return
+    let raf: number
+    let mx = 0, my = 0
     const handleMouse = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 20
-      const y = (e.clientY / window.innerHeight - 0.5) * 20
-      el.style.transform = `translate(${x}px, ${y}px)`
+      mx = (e.clientX / window.innerWidth - 0.5) * 20
+      my = (e.clientY / window.innerHeight - 0.5) * 20
     }
+    const tick = () => {
+      el!.style.transform = `translate(${mx}px, ${my}px)`
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
     window.addEventListener('mousemove', handleMouse, { passive: true })
-    return () => window.removeEventListener('mousemove', handleMouse)
+    return () => {
+      window.removeEventListener('mousemove', handleMouse)
+      cancelAnimationFrame(raf)
+    }
   }, [])
 
   return (
@@ -38,12 +47,12 @@ const Hero = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-w7-dark via-w7-secondary/80 to-w7-dark" />
 
       <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-w7-gold/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-w7-accent2/10 rounded-full blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-w7-gold/5 rounded-full blur-[150px]" />
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-w7-gold/10 rounded-full blur-[80px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-w7-accent2/10 rounded-full blur-[60px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-w7-gold/5 rounded-full blur-[100px]" />
       </div>
 
-      <motion.div style={{ y, opacity }} className="relative z-10 w-full">
+      <motion.div style={{ y, opacity }} className="relative z-10 w-full will-change-transform">
         <div className="max-w-7xl mx-auto px-6 pt-24 pb-16 md:pb-20 grid md:grid-cols-2 gap-12 md:gap-8 items-center">
           <div className="text-center md:text-left">
             <motion.div
