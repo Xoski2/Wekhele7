@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useLenis } from '@/contexts/LenisContext'
 import { WHATSAPP_URL, PRICE } from '@/data'
-import { FaWhatsapp, FaChevronDown } from 'react-icons/fa'
+import { FaWhatsapp } from 'react-icons/fa'
 import { FiChevronDown } from 'react-icons/fi'
 import ColorSelector from './ColorSelector'
 
@@ -135,20 +135,7 @@ const Hero = () => {
         </div>
       </motion.div>
 
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        <button
-          onClick={() => scrollTo('#features')}
-          className="flex flex-col items-center gap-2 text-w7-gray cursor-pointer"
-          aria-label="Scroll to explore"
-        >
-          <span className="text-xs tracking-[0.2em] uppercase">Scroll</span>
-          <FaChevronDown className="w-4 h-4" />
-        </button>
-      </motion.div>
+
     </section>
   )
 }
