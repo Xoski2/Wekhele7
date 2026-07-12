@@ -107,18 +107,6 @@ const Contact = () => {
               </div>
             </div>
 
-            <div className="glass-card p-0 h-[200px] overflow-hidden rounded-2xl">
-              <iframe
-                src="https://www.openstreetmap.org/export/embed.html?bbox=34.98%2C-15.81%2C35.03%2C-15.76&layer=mapnik&marker=-15.7861%2C35.0058"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="W7 Worldwide - Blantyre, Chirimba"
-              />
-            </div>
           </motion.div>
 
           <motion.div
