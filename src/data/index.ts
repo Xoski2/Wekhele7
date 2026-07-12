@@ -138,7 +138,7 @@ export const WHY_CHOOSE: WhyChooseItem[] = [
 export const BOX_ITEMS: BoxItem[] = [
   { icon: '🎧', title: 'Premium TWS AirPods' },
   { icon: '📦', title: 'Charging Case' },
-  { icon: '🔌', title: 'USB Charging Cable' },
+  { icon: '🔌', title: 'Lightning Charging Cable' },
   { icon: '📖', title: 'User Manual' },
   { icon: '🔵', title: 'Extra Ear Tips (S, M, L)' },
 ]
