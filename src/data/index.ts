@@ -140,7 +140,7 @@ export const BOX_ITEMS: BoxItem[] = [
   { icon: '📦', title: 'Charging Case' },
   { icon: '⚡', title: 'Lightning Charging Cable' },
   { icon: '📖', title: 'User Manual' },
-  { icon: '🔵', title: 'Extra Ear Tips (S, M, L)' },
+
 ]
 
 export const REVIEWS: Review[] = [
