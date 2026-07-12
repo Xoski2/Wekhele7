@@ -20,7 +20,7 @@ const BackToTop = () => {
       {visible && (
         <motion.button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-24 z-40 flex items-center justify-center w-12 h-12 rounded-full glass text-w7-gold border border-w7-gold/20"
+          className="fixed bottom-6 left-6 z-40 flex items-center justify-center w-12 h-12 rounded-full glass text-w7-gold border border-w7-gold/20"
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
