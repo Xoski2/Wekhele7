@@ -1,0 +1,10 @@
+{
+  "name": "W7 Worldwide - Premium TWS AirPods",
+  "short_name": "W7 TWS",
+  "description": "Premium sound that moves with you. Experience crystal-clear audio with Premium TWS AirPods from W7 Worldwide.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": []
+}

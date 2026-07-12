@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://w7worldwide.com/sitemap.xml
