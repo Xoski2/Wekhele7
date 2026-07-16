@@ -2,11 +2,20 @@ import { useLenis } from '@/contexts/LenisContext'
 import { NAV_LINKS, WHATSAPP_URL, EMAIL } from '@/data'
 import { FaWhatsapp } from 'react-icons/fa'
 import { FiMail } from 'react-icons/fi'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 const Footer = () => {
   const { scrollTo } = useLenis()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const isHome = location.pathname === '/'
+
   const scrollToSection = (href: string) => {
-    scrollTo(href)
+    if (isHome) {
+      scrollTo(href)
+    } else {
+      navigate('/' + href)
+    }
   }
 
   return (
@@ -43,15 +52,25 @@ const Footer = () => {
           <div>
             <h4 className="text-sm font-medium mb-4">Quick Links</h4>
             <div className="flex flex-col gap-2.5">
-              {NAV_LINKS.map((link) => (
-                <button
-                  key={link.href}
-                  onClick={() => scrollToSection(link.href)}
-                  className="text-sm text-w7-gray hover:text-white transition-colors text-left cursor-pointer"
-                >
-                  {link.label}
-                </button>
-              ))}
+              {NAV_LINKS.map((link) =>
+                link.href === '/blog' ? (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    className="text-sm text-w7-gray hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <button
+                    key={link.href}
+                    onClick={() => scrollToSection(link.href)}
+                    className="text-sm text-w7-gray hover:text-white transition-colors text-left cursor-pointer"
+                  >
+                    {link.label}
+                  </button>
+                ),
+              )}
             </div>
           </div>
 

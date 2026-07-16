@@ -5,13 +5,17 @@ import { NAV_LINKS } from '@/data'
 import { HiMenu, HiX } from 'react-icons/hi'
 import { FaCreditCard } from 'react-icons/fa'
 import { usePayment } from '@/contexts/PaymentContext'
+import { useLocation, useNavigate, Link } from 'react-router-dom'
 
 const Navbar = () => {
   const { scrollTo } = useLenis()
   const { openModal } = usePayment()
+  const location = useLocation()
+  const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
+  const isHome = location.pathname === '/'
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
@@ -35,11 +39,19 @@ const Navbar = () => {
       window.removeEventListener('scroll', handleScroll)
       sections.forEach((s) => observer.unobserve(s))
     }
-  }, [])
+  }, [location.pathname])
 
-  const scrollToSection = (href: string) => {
+  const handleNavClick = (href: string) => {
     setMobileOpen(false)
-    scrollTo(href)
+    if (href.startsWith('#')) {
+      if (isHome) {
+        scrollTo(href)
+      } else {
+        navigate('/' + href)
+      }
+    } else {
+      navigate(href)
+    }
   }
 
   return (
@@ -52,26 +64,38 @@ const Navbar = () => {
       transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <button onClick={() => scrollToSection('#home')} className="flex items-center gap-2 cursor-pointer">
+        <Link to="/" className="flex items-center gap-2 cursor-pointer">
           <span className="text-xl font-bold tracking-tight">
             W7<span className="text-w7-gold">.</span>
           </span>
-        </button>
+        </Link>
 
         <div className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
-            <button
-              key={link.href}
-              onClick={() => scrollToSection(link.href)}
-              className={`text-sm tracking-wide transition-colors cursor-pointer ${
-                activeSection === link.href.slice(1)
-                  ? 'text-w7-gold'
-                  : 'text-w7-gray hover:text-white'
-              }`}
-            >
-              {link.label}
-            </button>
-          ))}
+          {NAV_LINKS.map((link) =>
+            link.href === '/blog' ? (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={`text-sm tracking-wide transition-colors ${
+                  location.pathname === '/blog' ? 'text-w7-gold' : 'text-w7-gray hover:text-white'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <button
+                key={link.href}
+                onClick={() => handleNavClick(link.href)}
+                className={`text-sm tracking-wide transition-colors cursor-pointer ${
+                  isHome && activeSection === link.href.slice(1)
+                    ? 'text-w7-gold'
+                    : 'text-w7-gray hover:text-white'
+                }`}
+              >
+                {link.label}
+              </button>
+            ),
+          )}
           <motion.button
             onClick={() => openModal()}
             className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-w7-gold text-w7-dark text-sm font-medium cursor-pointer"
@@ -102,19 +126,30 @@ const Navbar = () => {
             transition={{ duration: 0.3 }}
           >
             <div className="px-6 py-6 flex flex-col gap-4">
-              {NAV_LINKS.map((link) => (
-                <button
-                  key={link.href}
-                  onClick={() => scrollToSection(link.href)}
-                  className={`text-left py-2 text-sm tracking-wide transition-colors cursor-pointer ${
-                    activeSection === link.href.slice(1)
-                      ? 'text-w7-gold'
-                      : 'text-w7-gray hover:text-white'
-                  }`}
-                >
-                  {link.label}
-                </button>
-              ))}
+              {NAV_LINKS.map((link) =>
+                link.href === '/blog' ? (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="py-2 text-sm tracking-wide transition-colors text-w7-gray hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <button
+                    key={link.href}
+                    onClick={() => handleNavClick(link.href)}
+                    className={`text-left py-2 text-sm tracking-wide transition-colors cursor-pointer ${
+                      isHome && activeSection === link.href.slice(1)
+                        ? 'text-w7-gold'
+                        : 'text-w7-gray hover:text-white'
+                    }`}
+                  >
+                    {link.label}
+                  </button>
+                ),
+              )}
               <motion.button
                 onClick={() => { setMobileOpen(false); openModal() }}
                 className="flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-w7-gold text-w7-dark text-sm font-medium mt-2 cursor-pointer w-full"

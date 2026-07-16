@@ -1,44 +1,22 @@
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useLenis } from '@/contexts/LenisContext'
 import { PRICE } from '@/data'
 import { FaCreditCard } from 'react-icons/fa'
 import { FiChevronDown } from 'react-icons/fi'
 import { usePayment } from '@/contexts/PaymentContext'
-import ColorSelector from './ColorSelector'
+import advert from '@/assets/advert.mp4'
 
 const Hero = () => {
   const { scrollTo } = useLenis()
   const { openModal } = usePayment()
   const ref = useRef<HTMLDivElement>(null)
-  const productRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
   })
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
-
-  useEffect(() => {
-    const el = productRef.current
-    if (!el) return
-    let raf: number
-    let mx = 0, my = 0
-    const handleMouse = (e: MouseEvent) => {
-      mx = (e.clientX / window.innerWidth - 0.5) * 20
-      my = (e.clientY / window.innerHeight - 0.5) * 20
-    }
-    const tick = () => {
-      el!.style.transform = `translate(${mx}px, ${my}px)`
-      raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    window.addEventListener('mousemove', handleMouse, { passive: true })
-    return () => {
-      window.removeEventListener('mousemove', handleMouse)
-      cancelAnimationFrame(raf)
-    }
-  }, [])
 
   return (
     <section
@@ -132,19 +110,21 @@ const Hero = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.5 }}
           >
-            <div className="relative w-full max-w-md aspect-square">
-              <motion.div
-                ref={productRef}
-                className="relative z-10 w-full h-full flex items-center justify-center"
+            <div className="relative w-full max-w-md aspect-square rounded-2xl overflow-hidden glass-card">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
               >
-                <ColorSelector />
-              </motion.div>
+                <source src={advert} type="video/mp4" />
+              </video>
+              <div className="absolute inset-0 bg-gradient-to-t from-w7-dark/40 to-transparent" />
             </div>
           </motion.div>
         </div>
       </motion.div>
-
-
     </section>
   )
 }

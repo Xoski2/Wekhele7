@@ -1,11 +1,28 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FaWhatsapp, FaCheckCircle, FaLock, FaCreditCard, FaTruck, FaTimes } from 'react-icons/fa'
+import { FaWhatsapp, FaCheckCircle, FaLock, FaTruck, FaTimes } from 'react-icons/fa'
 import { FiChevronRight } from 'react-icons/fi'
 import { usePayment } from '@/contexts/PaymentContext'
 import { WHATSAPP_URL } from '@/data'
 
-type PaymentStep = 'choose' | 'form' | 'processing' | 'success'
+type PaymentStep = 'choose' | 'processing' | 'success'
+
+interface Gateway {
+  id: string
+  name: string
+  description: string
+  color: string
+  bgColor: string
+  icon: string
+}
+
+const GATEWAYS: Gateway[] = [
+  { id: 'paystack', name: 'Paystack', description: 'Pay with Visa, Mastercard, or Verve', color: '#0ba95b', bgColor: 'bg-green-500/10', icon: 'P' },
+  { id: 'flutterwave', name: 'Flutterwave', description: 'Card, mobile money, bank transfer', color: '#f9a825', bgColor: 'bg-yellow-500/10', icon: 'F' },
+  { id: 'airtel', name: 'Airtel Money', description: 'Pay with Airtel Money', color: '#e60000', bgColor: 'bg-red-500/10', icon: 'A' },
+  { id: 'tnm', name: 'TNM Mpamba', description: 'Pay with TNM Mpamba', color: '#00aeef', bgColor: 'bg-cyan-500/10', icon: 'T' },
+  { id: 'card', name: 'Credit / Debit Card', description: 'Direct card payment (Visa, Mastercard)', color: '#d4a853', bgColor: 'bg-w7-gold/10', icon: 'C' },
+]
 
 const OVERLAY = {
   initial: { opacity: 0 },
@@ -24,24 +41,14 @@ const generateRef = () => `W7-${Date.now().toString(36).toUpperCase()}-${Math.ra
 const PaymentModal = () => {
   const { isOpen, closeModal, productName, price } = usePayment()
   const [step, setStep] = useState<PaymentStep>('choose')
+  const [selectedGateway, setSelectedGateway] = useState<Gateway | null>(null)
   const [orderRef, setOrderRef] = useState('')
-
-  const [cardNumber, setCardNumber] = useState('')
-  const [expiry, setExpiry] = useState('')
-  const [cvv, setCvv] = useState('')
-  const [cardName, setCardName] = useState('')
-  const [errors, setErrors] = useState<Record<string, string>>({})
-
   const overlayRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (isOpen) {
       setStep('choose')
-      setErrors({})
-      setCardNumber('')
-      setExpiry('')
-      setCvv('')
-      setCardName('')
+      setSelectedGateway(null)
       setOrderRef('')
     }
   }, [isOpen])
@@ -51,38 +58,8 @@ const PaymentModal = () => {
     return () => { document.body.style.overflow = '' }
   }, [isOpen])
 
-  const formatCard = (v: string) => {
-    const d = v.replace(/\D/g, '').slice(0, 16)
-    return d.replace(/(.{4})/g, '$1 ').trim()
-  }
-
-  const formatExpiry = (v: string) => {
-    const d = v.replace(/\D/g, '').slice(0, 4)
-    if (d.length > 2) return `${d.slice(0, 2)}/${d.slice(2)}`
-    return d
-  }
-
-  const validate = () => {
-    const e: Record<string, string> = {}
-    const rawCard = cardNumber.replace(/\s/g, '')
-    if (rawCard.length !== 16) e.cardNumber = 'Enter a valid 16-digit card number'
-    const expParts = expiry.split('/')
-    if (expParts.length !== 2 || !expParts[0] || !expParts[1]) {
-      e.expiry = 'Enter a valid expiry date (MM/YY)'
-    } else {
-      const m = parseInt(expParts[0], 10)
-      const y = parseInt(expParts[1], 10)
-      if (m < 1 || m > 12) e.expiry = 'Invalid month'
-      if (y < 25 || y > 40) e.expiry = 'Invalid year'
-    }
-    if (cvv.length !== 3) e.cvv = 'Enter a valid 3-digit CVV'
-    if (!cardName.trim()) e.cardName = 'Cardholder name is required'
-    setErrors(e)
-    return Object.keys(e).length === 0
-  }
-
-  const handleSubmit = () => {
-    if (!validate()) return
+  const handleGatewaySelect = (gateway: Gateway) => {
+    setSelectedGateway(gateway)
     setStep('processing')
     setOrderRef(generateRef())
     setTimeout(() => setStep('success'), 2500)
@@ -138,120 +115,49 @@ const PaymentModal = () => {
                     <div className="w-16 h-16 rounded-full bg-w7-gold/10 flex items-center justify-center mx-auto mb-4">
                       <FaLock className="w-6 h-6 text-w7-gold" />
                     </div>
-                    <h3 className="text-2xl font-semibold mb-1">Checkout</h3>
+                    <h3 className="text-2xl font-semibold mb-1">Choose Payment Method</h3>
                     <p className="text-w7-gray text-sm">{productName}</p>
                     <div className="text-3xl font-bold gradient-gold mt-2">{price}</div>
                   </div>
 
-                  <button
-                    onClick={() => setStep('form')}
-                    className="w-full flex items-center justify-between gap-3 px-6 py-4 rounded-xl bg-w7-gold text-w7-dark font-semibold text-base mb-3 cursor-pointer hover:bg-w7-gold/90 transition-colors"
-                  >
-                    <span className="flex items-center gap-3">
-                      <FaCreditCard className="w-5 h-5" />
-                      Pay Now
-                    </span>
-                    <FiChevronRight className="w-5 h-5" />
-                  </button>
+                  <div className="space-y-2.5 mb-6">
+                    {GATEWAYS.map((gateway) => (
+                      <button
+                        key={gateway.id}
+                        onClick={() => handleGatewaySelect(gateway)}
+                        className="w-full flex items-center gap-4 px-5 py-4 rounded-xl glass text-white hover:bg-white/10 cursor-pointer transition-all group"
+                      >
+                        <div
+                          className={`w-10 h-10 rounded-xl ${gateway.bgColor} flex items-center justify-center font-bold text-lg shrink-0`}
+                          style={{ color: gateway.color }}
+                        >
+                          {gateway.icon}
+                        </div>
+                        <div className="flex-1 text-left">
+                          <span className="text-sm font-medium block">{gateway.name}</span>
+                          <span className="text-xs text-w7-gray">{gateway.description}</span>
+                        </div>
+                        <FiChevronRight className="w-4 h-4 text-w7-gray group-hover:text-white transition-colors" />
+                      </button>
+                    ))}
+                  </div>
 
                   <button
                     onClick={handlePayOnDelivery}
-                    className="w-full flex items-center justify-between gap-3 px-6 py-4 rounded-xl glass text-white font-medium text-base cursor-pointer hover:bg-white/10 transition-colors"
+                    className="w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl border border-white/10 text-white/70 hover:text-white hover:border-white/20 cursor-pointer transition-all text-sm"
                   >
-                    <span className="flex items-center gap-3">
-                      <FaTruck className="w-5 h-5" />
-                      Pay on Delivery
-                    </span>
-                    <FiChevronRight className="w-5 h-5 text-w7-gray" />
+                    <FaTruck className="w-4 h-4" />
+                    Pay on Delivery (via WhatsApp)
                   </button>
 
-                  <p className="text-center text-xs text-w7-gray mt-6">
+                  <p className="text-center text-xs text-w7-gray mt-5">
                     <FaLock className="inline w-3 h-3 mr-1" />
                     Secure checkout. No real payment will be processed.
                   </p>
                 </motion.div>
               )}
 
-              {step === 'form' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <h3 className="text-xl font-semibold mb-1">Card Payment</h3>
-                  <p className="text-w7-gray text-sm mb-6">Enter your card details (mock)</p>
-
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-xs text-w7-gray uppercase tracking-wider mb-1.5">Cardholder Name</label>
-                      <input
-                        type="text"
-                        value={cardName}
-                        onChange={(e) => setCardName(e.target.value)}
-                        placeholder="John Doe"
-                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-w7-gold/50 transition-colors"
-                      />
-                      {errors.cardName && <p className="text-red-400 text-xs mt-1">{errors.cardName}</p>}
-                    </div>
-
-                    <div>
-                      <label className="block text-xs text-w7-gray uppercase tracking-wider mb-1.5">Card Number</label>
-                      <input
-                        type="text"
-                        value={cardNumber}
-                        onChange={(e) => setCardNumber(formatCard(e.target.value))}
-                        placeholder="4242 4242 4242 4242"
-                        maxLength={19}
-                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-w7-gold/50 transition-colors"
-                      />
-                      {errors.cardNumber && <p className="text-red-400 text-xs mt-1">{errors.cardNumber}</p>}
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs text-w7-gray uppercase tracking-wider mb-1.5">Expiry Date</label>
-                        <input
-                          type="text"
-                          value={expiry}
-                          onChange={(e) => setExpiry(formatExpiry(e.target.value))}
-                          placeholder="MM/YY"
-                          maxLength={5}
-                          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-w7-gold/50 transition-colors"
-                        />
-                        {errors.expiry && <p className="text-red-400 text-xs mt-1">{errors.expiry}</p>}
-                      </div>
-                      <div>
-                        <label className="block text-xs text-w7-gray uppercase tracking-wider mb-1.5">CVV</label>
-                        <input
-                          type="text"
-                          value={cvv}
-                          onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 3))}
-                          placeholder="***"
-                          maxLength={3}
-                          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-w7-gold/50 transition-colors"
-                        />
-                        {errors.cvv && <p className="text-red-400 text-xs mt-1">{errors.cvv}</p>}
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={handleSubmit}
-                      className="w-full py-4 rounded-xl bg-w7-gold text-w7-dark font-semibold text-base cursor-pointer hover:bg-w7-gold/90 transition-colors mt-2"
-                    >
-                      Pay {price}
-                    </button>
-
-                    <button
-                      onClick={() => setStep('choose')}
-                      className="w-full text-center text-sm text-w7-gray hover:text-white cursor-pointer transition-colors"
-                    >
-                      Back to payment options
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-
-              {step === 'processing' && (
+              {step === 'processing' && selectedGateway && (
                 <motion.div
                   className="text-center py-12"
                   initial={{ opacity: 0 }}
@@ -259,11 +165,22 @@ const PaymentModal = () => {
                   transition={{ duration: 0.3 }}
                 >
                   <motion.div
-                    className="w-16 h-16 rounded-full border-4 border-w7-gold/20 border-t-w7-gold mx-auto mb-6"
+                    className="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 text-2xl font-bold"
+                    style={{ backgroundColor: `${selectedGateway.color}15`, color: selectedGateway.color }}
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    {selectedGateway.icon}
+                  </motion.div>
+                  <motion.div
+                    className="w-12 h-12 rounded-full border-4 mx-auto mb-5 -mt-2"
+                    style={{ borderColor: `${selectedGateway.color}20`, borderTopColor: selectedGateway.color }}
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                   />
-                  <h3 className="text-xl font-semibold mb-2">Processing Payment</h3>
+                  <h3 className="text-xl font-semibold mb-2">
+                    Processing via <span style={{ color: selectedGateway.color }}>{selectedGateway.name}</span>
+                  </h3>
                   <p className="text-w7-gray text-sm">Please wait while we process your payment...</p>
                 </motion.div>
               )}
@@ -283,7 +200,9 @@ const PaymentModal = () => {
                     <FaCheckCircle className="w-20 h-20 text-green-400 mx-auto mb-4" />
                   </motion.div>
                   <h3 className="text-2xl font-semibold mb-1">Payment Successful!</h3>
-                  <p className="text-w7-gray text-sm mb-4">Your order has been placed (mock)</p>
+                  <p className="text-w7-gray text-sm mb-4">
+                    Paid via <span className="text-white font-medium">{selectedGateway?.name}</span>
+                  </p>
 
                   <div className="glass rounded-xl p-4 mb-6 text-left">
                     <div className="flex justify-between text-sm mb-2">
@@ -293,6 +212,10 @@ const PaymentModal = () => {
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-w7-gray">Product</span>
                       <span>{productName}</span>
+                    </div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-w7-gray">Payment Method</span>
+                      <span>{selectedGateway?.name}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-w7-gray">Amount</span>

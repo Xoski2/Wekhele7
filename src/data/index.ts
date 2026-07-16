@@ -13,6 +13,7 @@ export const NAV_LINKS: NavLink[] = [
   { label: 'Features', href: '#features' },
   { label: 'Reviews', href: '#reviews' },
   { label: 'Pricing', href: '#pricing' },
+  { label: 'Blog', href: '/blog' },
   { label: 'Contact', href: '#contact' },
 ]
 
@@ -217,7 +218,7 @@ export const FAQS: FAQItem[] = [
   },
   {
     question: 'How do I place an order?',
-    answer: 'Simply click the "Buy Now" button anywhere on the website, and you\'ll be connected with us on WhatsApp. Tell us your preferred color and delivery location, and we\'ll handle the rest thank you!',
+    answer: 'Click the "Buy Now" button and choose your preferred payment method — Paystack, Flutterwave, Airtel Money, TNM Mpamba, or card. After payment, you\'ll be connected with us on WhatsApp to confirm your color and delivery details.',
   },
 ]
 

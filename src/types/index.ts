@@ -39,3 +39,16 @@ export interface BoxItem {
   icon: string
   title: string
 }
+
+export interface BlogPost {
+  id: number
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  date: string
+  author: string
+  category: string
+  image: string
+  readTime: string
+}

@@ -1,8 +1,11 @@
+import { Routes, Route } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { LenisProvider } from '@/contexts/LenisContext'
 import { PaymentProvider } from '@/contexts/PaymentContext'
 import Navbar from '@/components/Navbar'
 import Home from '@/pages/Home'
+import Blog from '@/pages/Blog'
+import BlogPost from '@/pages/BlogPost'
 import Footer from '@/components/Footer'
 import ScrollProgress from '@/components/ScrollProgress'
 import WhatsAppButton from '@/components/WhatsAppButton'
@@ -22,7 +25,11 @@ const App = () => {
           <InteractiveCursor />
           <ScrollProgress />
           <Navbar />
-          <Home />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+          </Routes>
           <Footer />
           <WhatsAppButton />
           <BackToTop />

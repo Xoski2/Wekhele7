@@ -7,6 +7,7 @@ import ProductGallery from '@/components/ProductGallery'
 import Reviews from '@/components/Reviews'
 import Pricing from '@/components/Pricing'
 import FAQ from '@/components/FAQ'
+import BlogSection from '@/components/BlogSection'
 import Newsletter from '@/components/Newsletter'
 import Contact from '@/components/Contact'
 
@@ -23,6 +24,7 @@ const Home = () => {
         <Reviews />
         <Pricing />
         <FAQ />
+        <BlogSection />
         <Newsletter />
         <Contact />
       </main>
