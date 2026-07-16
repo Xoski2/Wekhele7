@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLenis } from '@/contexts/LenisContext'
-import { NAV_LINKS, WHATSAPP_URL } from '@/data'
+import { NAV_LINKS } from '@/data'
 import { HiMenu, HiX } from 'react-icons/hi'
-import { FaWhatsapp } from 'react-icons/fa'
+import { FaCreditCard } from 'react-icons/fa'
+import { usePayment } from '@/contexts/PaymentContext'
 
 const Navbar = () => {
   const { scrollTo } = useLenis()
+  const { openModal } = usePayment()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
@@ -70,17 +72,15 @@ const Navbar = () => {
               {link.label}
             </button>
           ))}
-          <motion.a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-w7-gold text-w7-dark text-sm font-medium"
+          <motion.button
+            onClick={() => openModal()}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-w7-gold text-w7-dark text-sm font-medium cursor-pointer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <FaWhatsapp className="w-4 h-4" />
+            <FaCreditCard className="w-4 h-4" />
             Buy Now
-          </motion.a>
+          </motion.button>
         </div>
 
         <button
@@ -115,17 +115,15 @@ const Navbar = () => {
                   {link.label}
                 </button>
               ))}
-              <motion.a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-w7-gold text-w7-dark text-sm font-medium mt-2"
+              <motion.button
+                onClick={() => { setMobileOpen(false); openModal() }}
+                className="flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-w7-gold text-w7-dark text-sm font-medium mt-2 cursor-pointer w-full"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <FaWhatsapp className="w-4 h-4" />
+                <FaCreditCard className="w-4 h-4" />
                 Buy Now - MWK 20,000
-              </motion.a>
+              </motion.button>
             </div>
           </motion.div>
         )}

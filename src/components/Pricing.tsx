@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion'
-import { WHATSAPP_URL, PRICE, DELIVERY_PARTNERS, PRODUCT_COLORS, FEATURES } from '@/data'
-import { FaWhatsapp, FaCheckCircle } from 'react-icons/fa'
+import { PRICE, DELIVERY_PARTNERS, PRODUCT_COLORS, FEATURES } from '@/data'
+import { FaCreditCard, FaCheckCircle, FaWhatsapp } from 'react-icons/fa'
 import { FiTruck } from 'react-icons/fi'
 import { useColor } from '@/contexts/ColorContext'
+import { usePayment } from '@/contexts/PaymentContext'
 
 const Pricing = () => {
   const { activeColor, setActiveColor } = useColor()
+  const { openModal } = usePayment()
   const topFeatures = FEATURES.slice(0, 6)
 
   return (
@@ -36,17 +38,15 @@ const Pricing = () => {
             <div className="text-5xl md:text-6xl font-bold gradient-gold mb-2">{PRICE}</div>
             <p className="text-w7-gray text-sm mb-8">Free delivery in Blantyre</p>
 
-            <motion.a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-10 py-4 rounded-full bg-w7-gold text-w7-dark font-semibold text-base mb-8"
+            <motion.button
+              onClick={() => openModal()}
+              className="inline-flex items-center gap-3 px-10 py-4 rounded-full bg-w7-gold text-w7-dark font-semibold text-base mb-8 cursor-pointer"
               whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(212,168,83,0.3)' }}
               whileTap={{ scale: 0.95 }}
             >
-              <FaWhatsapp className="w-5 h-5" />
-              Buy Now on WhatsApp
-            </motion.a>
+              <FaCreditCard className="w-5 h-5" />
+              Buy Now
+            </motion.button>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
               {topFeatures.map((feature, idx) => (
