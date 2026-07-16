@@ -15,6 +15,7 @@ import LoadingScreen from '@/components/LoadingScreen'
 import InteractiveCursor from '@/components/InteractiveCursor'
 import SEO from '@/components/SEO'
 import PaymentModal from '@/components/PaymentModal'
+import InstallPrompt from '@/components/InstallPrompt'
 
 const App = () => {
   return (
@@ -35,6 +36,7 @@ const App = () => {
           <ChatBot />
           <WhatsAppButton />
           <BackToTop />
+          <InstallPrompt />
           <PaymentModal />
         </PaymentProvider>
       </LenisProvider>
