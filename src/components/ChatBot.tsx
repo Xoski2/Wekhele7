@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FaTimes, FaPaperPlane, FaRobot, FaWhatsapp } from 'react-icons/fa'
-import { FiMessageSquare } from 'react-icons/fi'
+import { FiMessageSquare, FiLogOut } from 'react-icons/fi'
 import { WELCOME_MESSAGE, SUGGESTED_QUESTIONS, RESPONSES } from '@/data/chatbot'
 
 interface Message {
@@ -16,6 +16,7 @@ const ChatBot = () => {
   const [showQuestions, setShowQuestions] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const chatRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -24,6 +25,26 @@ const ChatBot = () => {
   useEffect(() => {
     if (open) inputRef.current?.focus()
   }, [open])
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (open && chatRef.current && !chatRef.current.contains(e.target as Node)) {
+        const btn = document.querySelector('[data-chat-toggle]')
+        if (btn && btn.contains(e.target as Node)) return
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [open])
+
+  const endChat = () => {
+    setOpen(false)
+    setTimeout(() => {
+      setMessages([{ text: WELCOME_MESSAGE, isBot: true }])
+      setShowQuestions(true)
+    }, 300)
+  }
 
   const findResponse = (query: string): Message => {
     const lower = query.toLowerCase()
@@ -87,20 +108,22 @@ const ChatBot = () => {
   return (
     <>
       <motion.button
-        onClick={() => setOpen(true)}
+        data-chat-toggle
+        onClick={() => setOpen((prev) => !prev)}
         className="fixed bottom-6 right-24 z-40 flex items-center justify-center w-14 h-14 rounded-full bg-w7-gold text-w7-dark shadow-lg shadow-w7-gold/25 hover:shadow-w7-gold/40"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        animate={{ y: [0, -6, 0] }}
+        animate={open ? {} : { y: [0, -6, 0] }}
         transition={{ y: { duration: 2, repeat: Infinity, ease: 'easeInOut' } }}
-        aria-label="Chat with assistant"
+        aria-label={open ? 'Close chat' : 'Chat with assistant'}
       >
-        <FiMessageSquare className="w-6 h-6" />
+        {open ? <FaTimes className="w-5 h-5" /> : <FiMessageSquare className="w-6 h-6" />}
       </motion.button>
 
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={chatRef}
             className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] glass-card overflow-hidden"
             style={{ maxHeight: 'min(600px, calc(100vh - 120px))' }}
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -120,7 +143,8 @@ const ChatBot = () => {
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="text-w7-gray hover:text-white cursor-pointer transition-colors"
+                className="text-w7-gray hover:text-white cursor-pointer transition-colors p-1"
+                title="Close chat"
               >
                 <FaTimes className="w-4 h-4" />
               </button>
@@ -180,15 +204,24 @@ const ChatBot = () => {
                   <FaPaperPlane className="w-4 h-4" />
                 </button>
               </div>
-              <a
-                href="https://wa.me/+265990173974"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1.5 text-[10px] text-w7-gray hover:text-green-400 mt-2 transition-colors"
-              >
-                <FaWhatsapp className="w-3 h-3" />
-                Chat with a real person on WhatsApp
-              </a>
+              <div className="flex items-center justify-between mt-2">
+                <a
+                  href="https://wa.me/+265990173974"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-[10px] text-w7-gray hover:text-green-400 transition-colors"
+                >
+                  <FaWhatsapp className="w-3 h-3" />
+                  Live support
+                </a>
+                <button
+                  onClick={endChat}
+                  className="flex items-center gap-1.5 text-[10px] text-w7-gray hover:text-red-400 transition-colors cursor-pointer"
+                >
+                  <FiLogOut className="w-3 h-3" />
+                  End chat
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
