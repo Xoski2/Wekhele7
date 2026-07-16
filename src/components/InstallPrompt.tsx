@@ -92,7 +92,7 @@ const InstallPrompt = () => {
   )
 }
 
-export const InstallButton = () => {
+export const InstallButton = ({ compact }: { compact?: boolean }) => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [isInstalled, setIsInstalled] = useState(false)
 
@@ -117,6 +117,18 @@ export const InstallButton = () => {
   }
 
   if (isInstalled) return null
+
+  if (compact) {
+    return (
+      <button
+        onClick={handleInstall}
+        className="flex items-center justify-center w-9 h-9 rounded-full glass text-w7-gray hover:text-white hover:bg-white/10 cursor-pointer transition-all"
+        title="Install app"
+      >
+        <FiSmartphone className="w-4 h-4" />
+      </button>
+    )
+  }
 
   return (
     <button

@@ -71,6 +71,24 @@ const Navbar = () => {
           </span>
         </Link>
 
+        <div className="flex items-center gap-3">
+          <div className="hidden md:block">
+            <InstallButton />
+          </div>
+          <motion.button
+            onClick={() => openModal()}
+            className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-full bg-w7-gold text-w7-dark text-sm font-medium cursor-pointer"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FaCreditCard className="w-4 h-4" />
+            Buy Now
+          </motion.button>
+          <div className="md:hidden">
+            <InstallButton compact />
+          </div>
+        </div>
+
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map((link) =>
             link.href === '/blog' ? (
@@ -97,16 +115,6 @@ const Navbar = () => {
               </button>
             ),
           )}
-          <InstallButton />
-          <motion.button
-            onClick={() => openModal()}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-w7-gold text-w7-dark text-sm font-medium cursor-pointer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <FaCreditCard className="w-4 h-4" />
-            Buy Now
-          </motion.button>
         </div>
 
         <button
@@ -152,9 +160,6 @@ const Navbar = () => {
                   </button>
                 ),
               )}
-              <div className="flex items-center justify-center mt-2">
-                <InstallButton />
-              </div>
               <motion.button
                 onClick={() => { setMobileOpen(false); openModal() }}
                 className="flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-w7-gold text-w7-dark text-sm font-medium mt-2 cursor-pointer w-full"
