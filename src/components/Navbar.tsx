@@ -5,6 +5,7 @@ import { NAV_LINKS } from '@/data'
 import { HiMenu, HiX } from 'react-icons/hi'
 import { FaCreditCard } from 'react-icons/fa'
 import { usePayment } from '@/contexts/PaymentContext'
+import { InstallButton } from '@/components/InstallPrompt'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 
 const Navbar = () => {
@@ -96,6 +97,7 @@ const Navbar = () => {
               </button>
             ),
           )}
+          <InstallButton />
           <motion.button
             onClick={() => openModal()}
             className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-w7-gold text-w7-dark text-sm font-medium cursor-pointer"
@@ -150,6 +152,9 @@ const Navbar = () => {
                   </button>
                 ),
               )}
+              <div className="flex items-center justify-center mt-2">
+                <InstallButton />
+              </div>
               <motion.button
                 onClick={() => { setMobileOpen(false); openModal() }}
                 className="flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-w7-gold text-w7-dark text-sm font-medium mt-2 cursor-pointer w-full"

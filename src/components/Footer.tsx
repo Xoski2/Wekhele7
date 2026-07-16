@@ -3,6 +3,7 @@ import { NAV_LINKS, WHATSAPP_URL, EMAIL } from '@/data'
 import { FaWhatsapp } from 'react-icons/fa'
 import { FiMail } from 'react-icons/fi'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { InstallButton } from '@/components/InstallPrompt'
 
 const Footer = () => {
   const { scrollTo } = useLenis()
@@ -83,6 +84,7 @@ const Footer = () => {
               >
                 FAQ
               </button>
+              <InstallButton />
               <a href="#" className="text-sm text-w7-gray hover:text-white transition-colors">
                 Privacy Policy
               </a>
