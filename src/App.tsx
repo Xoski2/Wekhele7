@@ -9,6 +9,7 @@ import BlogPost from '@/pages/BlogPost'
 import Footer from '@/components/Footer'
 import ScrollProgress from '@/components/ScrollProgress'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import ChatBot from '@/components/ChatBot'
 import BackToTop from '@/components/BackToTop'
 import LoadingScreen from '@/components/LoadingScreen'
 import InteractiveCursor from '@/components/InteractiveCursor'
@@ -31,6 +32,7 @@ const App = () => {
             <Route path="/blog/:slug" element={<BlogPost />} />
           </Routes>
           <Footer />
+          <ChatBot />
           <WhatsAppButton />
           <BackToTop />
           <PaymentModal />
